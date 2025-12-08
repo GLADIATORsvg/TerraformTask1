@@ -1,27 +1,24 @@
-variable "repo_name" {
-  description = "Name of the GitHub repository"
-  type        = string
-}
-
-variable "repo_owner" {
-  description = "GitHub organization or user that owns the repository"
-  type        = string
-}
-
 variable "github_token" {
-  description = "GitHub PAT used by Terraform"
   type        = string
-  sensitive   = true
+  description = "GitHub Personal Access Token"
+}
+
+variable "github_owner" {
+  type        = string
+  description = "GitHub username or organization"
+}
+
+variable "repo_name" {
+  type        = string
+  description = "Repository name"
 }
 
 variable "deploy_public_key" {
-  description = "Public key for DEPLOY_KEY"
   type        = string
+  description = "Deploy key (public part)"
 }
 
 variable "pat_value" {
-  description = "PAT secret for GitHub Actions"
   type        = string
-  sensitive   = true
+  description = "PAT value to store in GitHub Actions Secret"
 }
-

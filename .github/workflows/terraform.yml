@@ -17,11 +17,11 @@ jobs:
       - name: Terraform Init
         working-directory: ./terraform
         env:
-          GITHUB_TOKEN: ${{ secrets.TERRAFORM }}
+          TF_VAR_github_token: ${{ secrets.TERRAFORM }}
         run: terraform init
 
       - name: Terraform Apply
         working-directory: ./terraform
         env:
-          GITHUB_TOKEN: ${{ secrets.TERRAFORM }}
+          TF_VAR_github_token: ${{ secrets.TERRAFORM }}
         run: terraform apply -auto-approve

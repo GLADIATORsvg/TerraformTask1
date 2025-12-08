@@ -1,0 +1,27 @@
+name: Terraform Apply
+
+on:
+  workflow_dispatch:
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        env:
+          GITHUB_TOKEN: ${{ secrets.TERRAFORM }}
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        env:
+          GITHUB_TOKEN: ${{ secrets.TERRAFORM }}
+        run: terraform apply -auto-approve

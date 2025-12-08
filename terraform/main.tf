@@ -1,23 +1,22 @@
+#### ---------------- COLLABORATOR ---------------- ####
 resource "github_repository_collaborator" "softserve" {
   repository = var.repo_name
   username   = "softservedata"
   permission = "push"
 }
 
-
-
+#### ---------------- DEVELOP BRANCH ---------------- ####
 resource "github_branch" "develop" {
   repository = var.repo_name
   branch     = "develop"
 }
-
 
 resource "github_branch_default" "default" {
   repository = var.repo_name
   branch     = github_branch.develop.branch
 }
 
-
+#### ---------------- BRANCH PROTECTIONS ---------------- ####
 resource "github_branch_protection" "develop_protection" {
   repository_id        = var.repo_name
   pattern              = "develop"
@@ -29,7 +28,6 @@ resource "github_branch_protection" "develop_protection" {
     required_approving_review_count = 2
   }
 }
-
 
 resource "github_branch_protection" "main_protection" {
   repository_id        = var.repo_name
@@ -43,6 +41,7 @@ resource "github_branch_protection" "main_protection" {
   }
 }
 
+#### ---------------- PR TEMPLATE ---------------- ####
 resource "github_repository_file" "pr_template" {
   repository      = var.repo_name
   file            = ".github/pull_request_template.md"
@@ -51,7 +50,7 @@ resource "github_repository_file" "pr_template" {
   commit_message  = "Add PR template"
 }
 
-
+#### ---------------- DEPLOY KEY ---------------- ####
 resource "github_repository_deploy_key" "deploy_key" {
   title      = "DEPLOY_KEY"
   repository = var.repo_name
@@ -59,6 +58,7 @@ resource "github_repository_deploy_key" "deploy_key" {
   read_only  = false
 }
 
+#### ---------------- ACTIONS SECRET ---------------- ####
 resource "github_actions_secret" "pat" {
   repository      = var.repo_name
   secret_name     = "PAT"

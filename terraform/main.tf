@@ -1,61 +1,72 @@
 #### ---------------- COLLABORATOR ---------------- ####
 resource "github_repository_collaborator" "softserve" {
-  repository = var.repo_name
+  repository = local.repo_name
   username   = "softservedata"
   permission = "push"
 }
 
 #### ---------------- DEVELOP BRANCH ---------------- ####
-resource "github_branch" "develop" {
-  repository = var.repo_name
+resource "github_branch" "develop_branch" {
+  repository = local.repo_name
   branch     = "develop"
 }
 
-resource "github_branch_default" "default" {
-  repository = var.repo_name
-  branch     = github_branch.develop.branch
+resource "github_branch_default" "default_branch_default" {
+  repository = local.repo_name
+  branch     = github_branch.develop_branch.branch
 }
 
 #### ---------------- BRANCH PROTECTIONS ---------------- ####
-resource "github_branch_protection" "develop_protection" {
+resource "github_branch_protection" "develop_protec_rules" {
   repository_id        = var.repo_name
   pattern              = "develop"
-  enforce_admins       = true
-  require_pull_request = true
-
+  
   required_pull_request_reviews {
-    dismiss_stale_reviews           = false
     required_approving_review_count = 2
   }
 }
 
-resource "github_branch_protection" "main_protection" {
-  repository_id        = var.repo_name
+resource "github_branch_protection" "main_protect_rules" {
+  repository_id        = local.repo_name
   pattern              = "main"
-  enforce_admins       = true
-  require_pull_request = true
 
   required_pull_request_reviews {
-    dismiss_stale_reviews           = false
-    required_approving_review_count = 1
+    require_code_owner_reviews      = true
+    required_approving_review_count = 0
   }
 }
 
 #### ---------------- PR TEMPLATE ---------------- ####
-resource "github_repository_file" "pr_template" {
-  repository      = var.repo_name
-  file            = ".github/pull_request_template.md"
-  content         = file("${path.module}/pull_request_template.md")
-  branch          = github_branch.develop.branch
-  commit_message  = "Add PR template"
+resource "github_repository_file" "codeowners" {
+  repository          = local.repo_name
+  file                = ".github/CODEOWNERS"
+  content             = "* @softservedata"
+  branch              = "main"
+  overwrite_on_create = true
+}
+
+resource "github_repository_file" "main_pr_template" {
+  repository          = local.repo_name
+  file                = ".github/pull_request_template.md"
+  content             = local.pr_tmplt_content
+  branch              = "main"
+  overwrite_on_create = true
+}
+
+resource "github_repository_file" "develop_pr_template" {
+  repository          = local.repo_name
+  file                = ".github/pull_request_template.md"
+  content             = local.pr_tmplt_content
+  branch              = "main"
+  overwrite_on_create = true
+  depends_on          = [github_branch.develop_branch]
 }
 
 #### ---------------- DEPLOY KEY ---------------- ####
 resource "github_repository_deploy_key" "deploy_key" {
   title      = "DEPLOY_KEY"
   repository = var.repo_name
-  key        = var.deploy_public_key
-  read_only  = false
+  key        = "ssh-rsa AAAAB3Nza..."
 }
 
 #### ---------------- ACTIONS SECRET ---------------- ####

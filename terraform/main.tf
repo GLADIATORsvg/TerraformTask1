@@ -1,6 +1,7 @@
 ### REPO NAME ###
 locals {
   repo_name = var.repo_name
+  pr_tmplt_content  = var.pr_template_content
 }
 
 #### ---------------- COLLABORATOR ---------------- ####

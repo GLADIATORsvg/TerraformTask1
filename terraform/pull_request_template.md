@@ -1,13 +1,18 @@
-### Description
+resource "github_repository_file" "pr_template" {
+  repository          = local.repo_name
+  file                = ".github/pull_request_template.md"
+  content             = <<EOF
+Describe your changes
 
-Please describe your changes in detail.
+Issue ticket number and link
 
-### Issue Number
-
-Link related issue here.
-
-### Checklist
-
+Checklist before requesting a review:
 - [ ] I have performed a self-review of my code
-- [ ] I have added tests (if required)
-- [ ] I have updated documentation (if required)
+- [ ] If it is a core feature, I have added thorough tests
+- [ ] Do we need to implement analytics?
+- [ ] Will this be part of a product update? If yes, please write one phrase about this update
+EOF
+  branch              = "main"
+  overwrite_on_create = true
+  commit_message      = "Add PR template"
+}
